@@ -1,0 +1,7 @@
+{
+  "name": "pink-wine-garden",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}

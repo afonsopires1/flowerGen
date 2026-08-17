@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17050d" />
+  <title>Pink &amp; Wine Garden</title>
+  <style>
+    :root {
+      --night-top: #18050e;
+      --night-mid: #2c0b1b;
+      --night-bottom: #11060b;
+      --soil-dry: #3a201c;
+      --soil-wet: #160d0d;
+      --grass-dark: #173b28;
+      --grass-light: #2d6843;
+      --button-start: #f05693;
+      --button-end: #72152e;
+      --button-glow: rgba(240, 86, 147, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      color: white;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255, 166, 198, 0.12), transparent 23%),
+        radial-gradient(circle at 15% 30%, rgba(132, 21, 55, 0.2), transparent 29%),
+        radial-gradient(circle at 84% 24%, rgba(255, 105, 168, 0.13), transparent 28%),
+        linear-gradient(180deg, var(--night-top), var(--night-mid) 58%, var(--night-bottom));
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 22% 62%, rgba(255, 74, 144, 0.1), transparent 21%),
+        radial-gradient(circle at 77% 57%, rgba(130, 18, 50, 0.15), transparent 22%);
+      mix-blend-mode: screen;
+      animation: sky-drift 18s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.46) 0 1px, transparent 1.4px),
+        radial-gradient(circle, rgba(255,190,217,.32) 0 1px, transparent 1.4px);
+      background-position: 0 0, 58px 76px;
+      background-size: 230px 230px, 310px 310px;
+      opacity: 0.25;
+    }
+
+    @keyframes sky-drift {
+      to { transform: translateY(-18px) scale(1.03); }
+    }
+
+    #garden {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      isolation: isolate;
+      z-index: 3;
+    }
+
+    .ground {
+      position: fixed;
+      inset: auto 0 0;
+      height: 27vh;
+      min-height: 170px;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 10%, rgba(104, 55, 42, 0.46), transparent 50%),
+        linear-gradient(180deg, var(--soil-dry), #251411 45%, #100908);
+      border-top: 1px solid rgba(104, 155, 98, 0.18);
+      transition: filter 1.5s ease;
+    }
+
+    .ground::before {
+      content: "";
+      position: absolute;
+      inset: -31px 0 auto;
+      height: 48px;
+      background:
+        repeating-linear-gradient(76deg, transparent 0 13px, rgba(39, 94, 60, .96) 14px 17px, transparent 18px 28px),
+        repeating-linear-gradient(103deg, transparent 0 9px, rgba(28, 74, 46, .96) 10px 13px, transparent 14px 24px),
+        linear-gradient(180deg, transparent 55%, var(--grass-dark) 56%);
+      filter: drop-shadow(0 -4px 8px rgba(37, 113, 69, .13));
+    }
+
+    .ground::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background:
+        radial-gradient(ellipse at var(--water-x, 50%) 0%, rgba(7, 17, 15, .95), transparent 34%),
+        linear-gradient(180deg, rgba(13, 29, 23, .42), rgba(7, 8, 7, .24));
+      transition: opacity .55s ease;
+    }
+
+    .ground.wet::after {
+      opacity: 1;
+      animation: soak 1.65s ease-out forwards;
+    }
+
+    @keyframes soak {
+      0% { opacity: .15; transform: scaleX(.58); }
+      35% { opacity: 1; transform: scaleX(1); }
+      100% { opacity: .58; transform: scaleX(1.08); }
+    }
+
+    .ui {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: max(38px, env(safe-area-inset-bottom));
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    #waterBtn {
+      position: relative;
+      border: 1px solid rgba(255, 222, 235, .28);
+      border-radius: 999px;
+      min-width: 166px;
+      padding: 16px 30px;
+      color: #fff8fb;
+      font: 700 1rem/1 "Avenir Next", "Segoe UI", sans-serif;
+      letter-spacing: .08em;
+      cursor: pointer;
+      pointer-events: auto;
+      background: linear-gradient(135deg, var(--button-start), var(--button-end));
+      box-shadow: 0 17px 42px rgba(0,0,0,.44), 0 0 30px var(--button-glow), inset 0 1px rgba(255,255,255,.22);
+      transition: transform .2s ease, box-shadow .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #waterBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 48px rgba(0,0,0,.5), 0 0 38px rgba(240,86,147,.45), inset 0 1px rgba(255,255,255,.22);
+    }
+
+    #waterBtn:active {
+      transform: translateY(1px) scale(.98);
+    }
+
+    #waterBtn:focus-visible {
+      outline: 3px solid rgba(255, 218, 234, .92);
+      outline-offset: 5px;
+    }
+
+    .flower {
+      position: absolute;
+      bottom: clamp(75px, 10vh, 104px);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .flower-body {
+      width: 100%;
+      height: 100%;
+      transform-origin: 50% 100%;
+      animation: sway var(--sway-duration, 6.4s) ease-in-out infinite;
+      animation-delay: var(--sway-delay, 0s);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.3));
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(calc(var(--tilt, 0deg) - 1deg)); }
+      50% { transform: rotate(calc(var(--tilt, 0deg) + 1.15deg)); }
+    }
+
+    .stem-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-width: 10;
+      stroke-dasharray: var(--stem-length);
+      stroke-dashoffset: var(--stem-length);
+      animation: draw-stem 1.05s cubic-bezier(.2,.8,.25,1) forwards;
+    }
+
+    @keyframes draw-stem { to { stroke-dashoffset: 0; } }
+
+    .leaf {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: leaf-open .5s cubic-bezier(.18,1.15,.35,1) forwards;
+    }
+
+    .leaf.back { animation-delay: .48s; }
+    .leaf.front { animation-delay: .68s; }
+
+    @keyframes leaf-open {
+      0% { opacity: 0; transform: scale(.15) rotate(-12deg); }
+      70% { opacity: 1; transform: scale(1.08) rotate(4deg); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .bud {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: bud-rise .4s ease-out .72s forwards;
+    }
+
+    @keyframes bud-rise {
+      0% { opacity: 0; transform: scale(.2); }
+      50% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(.5); }
+    }
+
+    .calyx { opacity: 0; animation: appear .2s linear .82s forwards; }
+
+    .blossom {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: blossom-open .8s cubic-bezier(.18,1.2,.28,1) .82s forwards;
+    }
+
+    @keyframes appear { to { opacity: 1; } }
+
+    @keyframes blossom-open {
+      0% { opacity: 0; transform: scale(.18) rotate(-14deg); }
+      70% { opacity: 1; transform: scale(1.07) rotate(5deg); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .water-drop {
+      position: absolute;
+      top: -26px;
+      width: 7px;
+      height: 13px;
+      border-radius: 65% 45% 60% 50%;
+      background: linear-gradient(180deg, rgba(214,243,255,.96), rgba(83,176,222,.68));
+      box-shadow: 0 0 9px rgba(143,220,255,.62);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 25;
+      animation: water-fall var(--fall-time, .75s) cubic-bezier(.28,.06,.7,.45) forwards;
+    }
+
+    @keyframes water-fall {
+      0% { opacity: 0; transform: translate3d(0,0,0) rotate(20deg) scale(.65); }
+      15% { opacity: 1; }
+      100% { opacity: 0; transform: translate3d(var(--drift-x, 0px), var(--fall-y, 72vh), 0) rotate(20deg) scale(1); }
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,232,242,.92);
+      box-shadow: 0 0 13px rgba(255,116,174,.8);
+      opacity: 0;
+      animation: sparkle-up 1.8s ease-out forwards;
+      pointer-events: none;
+      z-index: 18;
+    }
+
+    @keyframes sparkle-up {
+      0% { opacity: 0; transform: scale(.2); }
+      22% { opacity: 1; }
+      100% { opacity: 0; transform: translate3d(var(--drift-x,0),-32px,0) scale(1.1); }
+    }
+
+    .float-petal {
+      position: absolute;
+      width: 14px;
+      height: 22px;
+      border-radius: 65% 65% 70% 70%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 6;
+      animation: petal-drift var(--flight-time,5.4s) ease-in forwards;
+    }
+
+    @keyframes petal-drift {
+      0% { opacity: 0; transform: translateY(-8px) rotate(var(--rotation,0deg)) scale(.5); }
+      15% { opacity: .9; }
+      100% { opacity: 0; transform: translate3d(var(--flight-x,0),100px,0) rotate(calc(var(--rotation,0deg) + 130deg)); }
+    }
+
+    @media (max-width: 720px) {
+      .ground { height: 24vh; }
+      .flower { bottom: clamp(68px, 9vh, 88px); }
+      #waterBtn { min-width: 150px; padding: 15px 26px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <main id="garden" aria-hidden="true"></main>
+  <div class="ground" id="ground"></div>
+  <div class="ui">
+    <button id="waterBtn" type="button">Water it</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
