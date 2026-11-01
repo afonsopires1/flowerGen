@@ -8,6 +8,7 @@ await mkdir(join(output, "assets"), { recursive: true });
 await mkdir(join(output, "server"), { recursive: true });
 await cp("index.html", join(output, "assets", "index.html"));
 await cp("script.js", join(output, "assets", "script.js"));
+await cp("assets", join(output, "assets", "assets"), { recursive: true });
 
 await writeFile(
   join(output, "server", "index.js"),

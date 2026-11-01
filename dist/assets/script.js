@@ -1,6 +1,14 @@
 const garden = document.getElementById("garden");
 const ground = document.getElementById("ground");
 const waterBtn = document.getElementById("waterBtn");
+const poem = document.getElementById("poem");
+
+const poemLines = [
+  "You came into my life when I least expected it.",
+  "What started as a little garden grew into more than I ever imagined.",
+  "Somewhere in your smile, I found a place that felt like home.",
+  "And if these flowers could speak, they'd tell you just how much you mean to me."
+];
 
 const flowers = [];
 let flowerId = 0;
@@ -40,6 +48,50 @@ function waterGarden() {
   const bloomCount = wateringCycle === 1 ? 3 : Math.round(randomRange(2, 5));
   window.setTimeout(() => growCluster(clusterCenter, bloomCount), 420);
   window.setTimeout(() => driftPetals(Math.min(5, bloomCount + 1)), 1220);
+  // Capture this watering so quick clicks still reveal every line in order.
+  const poemStep = wateringCycle;
+  if (!poem.hidden) window.setTimeout(() => revealPoem(poemStep), 1220);
+}
+
+function revealPoem(step) {
+  // Ignore pending reveals too, if the letter was closed during rapid watering.
+  if (poem.hidden) return;
+
+  if (step <= poemLines.length) {
+    const line = document.createElement("p");
+    line.className = "poem-line";
+    line.textContent = poemLines[step - 1];
+    poem.appendChild(line);
+
+    if (step === poemLines.length) {
+      const dedication = document.createElement("p");
+      dedication.className = "poem-dedication";
+      dedication.textContent = "For Mel ♡";
+      poem.prepend(dedication);
+      poem.classList.add("is-letter");
+
+      const closeButton = document.createElement("button");
+      closeButton.className = "letter-close";
+      closeButton.type = "button";
+      closeButton.textContent = "×";
+      closeButton.setAttribute("aria-label", "Close letter and return to garden");
+      closeButton.title = "Close letter";
+      closeButton.addEventListener("click", () => {
+        poem.hidden = true;
+        waterBtn.focus({ preventScroll: true });
+      });
+      poem.prepend(closeButton);
+    }
+
+    // Open the completed letter at its dedication; earlier reveals follow the new line.
+    poem.scrollTop = step === poemLines.length ? 0 : poem.scrollHeight;
+    return;
+  }
+
+  const dedication = poem.querySelector(".poem-dedication");
+  dedication.classList.remove("is-glowing");
+  void dedication.offsetWidth;
+  dedication.classList.add("is-glowing");
 }
 
 function rainOn(centerRatio) {

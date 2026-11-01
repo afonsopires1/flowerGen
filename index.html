@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#17050d" />
   <title>Pink &amp; Wine Garden</title>
+  <link rel="preload" as="image" href="assets/botanical-letter.png" />
   <style>
     :root {
       --night-top: #18050e;
@@ -134,6 +135,126 @@
       padding-bottom: max(38px, env(safe-area-inset-bottom));
       pointer-events: none;
       z-index: 30;
+    }
+
+    .poem {
+      position: fixed;
+      top: max(24px, 7vh, env(safe-area-inset-top));
+      left: 50%;
+      width: min(700px, calc(100% - 40px));
+      max-height: 48vh;
+      overflow-y: auto;
+      transform: translateX(-50%);
+      z-index: 20;
+      text-align: center;
+      color: #ffe5ef;
+      font: italic clamp(15px, 2.1vw, 19px)/1.65 Georgia, "Times New Roman", serif;
+      text-shadow: 0 2px 14px #18050e, 0 0 28px #18050e;
+      scrollbar-width: thin;
+    }
+
+    .poem:empty { display: none; }
+
+    /* Final-reveal stationery; all earlier watering states stay unchanged. */
+    .poem.is-letter {
+      width: min(780px, calc(100% - 32px));
+      max-height: min(72svh, calc(100svh - 145px));
+      padding: clamp(56px, 8vw, 76px) clamp(28px, 8vw, 80px);
+      border-radius: 9px 7px 10px 6px;
+      background-color: #f7ead4;
+      background-image:
+        radial-gradient(ellipse at 50% 49%, rgba(250, 240, 220, .96) 0%, rgba(250, 240, 220, .86) 38%, transparent 73%),
+        url("assets/botanical-letter.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      color: #533b38;
+      text-shadow: none;
+      box-shadow: 0 18px 60px rgba(7, 2, 5, .24),
+        0 2px 6px rgba(7, 2, 5, .12),
+        inset 0 0 0 1px rgba(117, 82, 66, .12);
+      scrollbar-color: #b89b83 #f7ead4;
+      transform-origin: 50% 0;
+      animation: letter-arrive 1.4s cubic-bezier(.2, .7, .2, 1) both;
+    }
+
+    .poem.is-letter .poem-line:last-child { margin-bottom: 0; }
+
+    .letter-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid rgba(83, 59, 56, .16);
+      border-radius: 50%;
+      color: #533b38;
+      background: rgba(250, 240, 220, .94);
+      font: 400 28px/1 "Segoe UI", sans-serif;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .letter-close:hover { background: #fff8ec; }
+
+    .letter-close:focus-visible {
+      outline: 2px solid #84485b;
+      outline-offset: 2px;
+    }
+
+    .poem.is-letter .poem-dedication {
+      color: #84485b;
+      margin-bottom: clamp(20px, 3vh, 28px);
+      font: italic 22px/1.4 Georgia, "Times New Roman", serif;
+      letter-spacing: .02em;
+    }
+
+    .poem.is-letter .poem-dedication.is-glowing {
+      animation-name: letter-dedication-glow;
+    }
+
+    @keyframes letter-arrive {
+      from {
+        opacity: 0;
+        clip-path: inset(0 0 96% 0 round 8px);
+        transform: translateX(-50%) translateY(10px) rotate(-.6deg);
+      }
+      to {
+        opacity: 1;
+        clip-path: inset(-70px round 8px);
+        transform: translateX(-50%) translateY(0) rotate(0);
+      }
+    }
+
+    @keyframes letter-dedication-glow {
+      50% { color: #6f3049; text-shadow: 0 0 14px rgba(174, 92, 119, .24); }
+    }
+
+    .poem-line {
+      margin: 0 0 clamp(12px, 2.2vh, 22px);
+      text-wrap: balance;
+      animation: poem-reveal 1.4s ease-out both;
+    }
+
+    .poem-dedication {
+      margin: 0 0 18px;
+      color: #f6a9c8;
+      font: 500 13px/1.5 "Avenir Next", "Segoe UI", sans-serif;
+      letter-spacing: .08em;
+      animation: poem-reveal 1.4s ease-out both;
+    }
+
+    .poem-dedication.is-glowing {
+      animation: dedication-glow 1.8s ease-in-out both;
+    }
+
+    @keyframes poem-reveal {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes dedication-glow {
+      50% { color: #fff4f8; text-shadow: 0 0 18px rgba(255, 151, 193, .9); }
     }
 
     #waterBtn {
@@ -307,6 +428,37 @@
       #waterBtn { min-width: 150px; padding: 15px 26px; }
     }
 
+    @media (max-width: 600px), (max-height: 500px) and (pointer: coarse) {
+      .poem {
+        --poem-top: max(16px, 3svh, env(safe-area-inset-top));
+        top: var(--poem-top);
+        font-size: 16px;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+        overscroll-behavior-y: contain;
+      }
+
+      .poem.is-letter {
+        width: min(600px, calc(100% - 32px));
+        /* Use the space with Safari's toolbars visible and keep the button clear. */
+        max-height: calc(100svh - var(--poem-top) - 160px - env(safe-area-inset-bottom));
+        padding: 44px 24px 40px;
+        /* Crop the landscape artwork instead of stretching its flowers. */
+        background-size: 100% 100%, cover;
+        background-position: center, 65% center;
+      }
+
+      .poem-line { margin-bottom: 14px; }
+      .poem.is-letter .poem-dedication { margin-bottom: 18px; }
+    }
+
+    @media (max-height: 500px) and (pointer: coarse) {
+      .poem.is-letter {
+        max-height: calc(100svh - var(--poem-top) - 110px - env(safe-area-inset-bottom));
+        padding-block: 56px 24px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
@@ -315,6 +467,7 @@
 <body>
   <main id="garden" aria-hidden="true"></main>
   <div class="ground" id="ground"></div>
+  <section class="poem" id="poem" role="log" aria-label="A poem for Mel" aria-live="polite" aria-relevant="additions"></section>
   <div class="ui">
     <button id="waterBtn" type="button">Water it</button>
   </div>
