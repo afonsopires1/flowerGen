@@ -3,6 +3,9 @@ const ground = document.getElementById("ground");
 const waterBtn = document.getElementById("waterBtn");
 const poem = document.getElementById("poem");
 
+
+
+
 const poemLines = [
   "You came into my life when I least expected it.",
   "What started as a little garden grew into more than I ever imagined.",
@@ -54,7 +57,7 @@ function waterGarden() {
 }
 
 function revealPoem(step) {
-  // Ignore pending reveals too, if the letter was closed during rapid watering.
+  // Ignore pending too, if the letter was closed during rapid watering.
   if (poem.hidden) return;
 
   if (step <= poemLines.length) {
